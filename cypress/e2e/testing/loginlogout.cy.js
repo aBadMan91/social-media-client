@@ -8,6 +8,7 @@ describe("Login and logout test", () => {
   beforeEach(() => {
     cy.visit("/");
     cy.clearLocalStorage();
+    cy.wait(1000);
   });
 
   it("Login with valid credentials", () => {
@@ -18,6 +19,7 @@ describe("Login and logout test", () => {
     cy.get("#loginForm button[type='submit']").click();
     cy.wait(1000);
     cy.get("button[data-visible='loggedIn']").should("exist");
+    cy.wait(1000);
   });
 
   it("Logging out using the logout button", () => {
@@ -33,7 +35,6 @@ describe("Login and logout test", () => {
     cy.get("button[data-visible='loggedIn']").click();
     cy.wait(1000);
     cy.get("button[data-visible='loggedOut']").should("exist");
-    cy.wait(2000);
     cy.get("button[data-visible='loggedIn']").should("not.be.visible");
   });
 
@@ -58,7 +59,7 @@ describe("Login and logout test", () => {
       assert.equal(interception.response.statusCode, 401);
     });
 
-    cy.wait(2000);
+    cy.wait(1000);
     cy.get("button[data-visible='loggedIn']").should("not.be.visible");
   });
 });
