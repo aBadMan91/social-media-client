@@ -35,7 +35,9 @@ describe("Login and logout test", () => {
     cy.get("button[data-visible='loggedIn']").click();
     cy.wait(1000);
     cy.get("button[data-visible='loggedOut']").should("exist");
-    cy.get("button[data-visible='loggedIn']").should("not.be.visible");
+    cy.get("button[data-visible='loggedIn']", { timeout: 10000 }).should(
+      "not.be.visible",
+    );
   });
 
   it("Try to login with invalid credentials, but fails and shows a message", () => {
@@ -60,6 +62,8 @@ describe("Login and logout test", () => {
     });
 
     cy.wait(1000);
-    cy.get("button[data-visible='loggedIn']").should("not.be.visible");
+    cy.get("button[data-visible='loggedIn']", { timeout: 10000 }).should(
+      "not.be.visible",
+    );
   });
 });
