@@ -4,14 +4,14 @@ const validPassword = "mynameagain24";
 const invalidEmail = "invalidEmail@noroff.no";
 const invalidPassword = "invalidPassword";
 
-describe("Login and logout test", () => {
+describe("Auth", () => {
   beforeEach(() => {
     cy.visit("/");
     cy.clearLocalStorage();
     cy.wait(1000);
   });
 
-  it("Login with valid credentials", () => {
+  it("allows a user to login with valid credentials", () => {
     cy.get("#registerForm button[data-auth='login']").click();
     cy.wait(1000);
     cy.get("#loginEmail").type(validEmail);
@@ -19,9 +19,15 @@ describe("Login and logout test", () => {
     cy.get("#loginForm button[type='submit']").click();
     cy.wait(1000);
     cy.get("button[data-visible='loggedIn']").should("exist");
+    cy.window().then((win) => {
+      const token = win.localStorage.getItem("token");
+      expect(token).to.exist;
+      expect(token).to.be.a("string");
+      expect(token).to.not.be.empty;
+    });
   });
 
-  it("Logging out using the logout button", () => {
+  it("allows a logged in user to logout", () => {
     cy.get("#registerForm button[data-auth='login']").click();
     cy.wait(1000);
     cy.get("#loginEmail").type(validEmail);
@@ -35,9 +41,13 @@ describe("Login and logout test", () => {
     cy.wait(1000);
     cy.get("button[data-visible='loggedOut']").should("exist");
     cy.get("button[data-visible='loggedOut']").should("be.visible");
+    cy.window().then((win) => {
+      const token = win.localStorage.getItem("token");
+      expect(token).to.be.null;
+    });
   });
 
-  it("Try to login with invalid credentials, but fails and shows a message", () => {
+  it("shows an error message when you try to login with invalid credentials", () => {
     cy.intercept(
       "POST",
       "https://nf-api.onrender.com/api/v1/social/auth/login",
