@@ -1,5 +1,16 @@
 export default {
-  setItem: jest.fn((key, value) => (localStorage[key] = value)),
-  getItem: jest.fn((key) => localStorage[key] || null),
-  removeItem: jest.fn((key) => delete localStorage[key]),
+  mockStorage: {},
+
+  setItem: jest.fn(function (key, value) {
+    this.mockStorage[key] = value;
+  }),
+  getItem: jest.fn(function (key) {
+    return this.mockStorage[key] || null;
+  }),
+  removeItem: jest.fn(function (key) {
+    delete this.mockStorage[key];
+  }),
+  clear: jest.fn(function () {
+    this.mockStorage = {};
+  }),
 };
