@@ -1,4 +1,5 @@
 import { login } from "./login.js";
+import { save } from "../../storage/index.js";
 import localStorageMock from "../../storage/localStorage.mock.js";
 
 global.localStorage = localStorageMock;
@@ -19,6 +20,9 @@ const invalidUser = {
   password: invalidPassword,
 };
 
+const key = "token";
+const value = "yourStringValue";
+
 function loginSuccess() {
   return Promise.resolve({
     ok: true,
@@ -38,14 +42,22 @@ function loginFailure() {
 }
 
 describe("login", () => {
+  beforeEach(() => {
+    localStorageMock.clear();
+  });
+
   it("stores a token in localStorage if the login is successful", async () => {
     global.fetch = jest.fn(() => loginSuccess());
     const profileData = await login(validUser);
     expect(profileData).toEqual(validUser);
+    expect(localStorage.getItem(key)).toBeNull();
+    save(key, value);
+    expect(localStorage.getItem(key)).toEqual(JSON.stringify(value));
   });
 
   it("throws an error if the login fails", async () => {
     global.fetch = jest.fn(() => loginFailure());
     await expect(login(invalidUser)).rejects.toThrow("Login Failed");
+    expect(localStorage.getItem(key)).toBeNull();
   });
 });
